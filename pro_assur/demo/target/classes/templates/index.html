@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pro-Assur</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/download.jpg" type="image/x-icon">
+</head>
+<body>
+    <form class="form" id="personalDataForm" method="POST" action="/api/submit">
+        <img src="/download.jpg" alt="" class="top-right-img">
+        <p class="title">Pro_Assur</p>
+        
+        <p class="message">Formulaire Pro_voyage</p>
+        <div class="flex">
+            <label>
+                <input class="input" type="text" placeholder="" id="lastName" required />
+                <span>Nom</span>
+            </label>
+
+            <label>
+                <input class="input" type="text" placeholder="" id="firstName" required />
+                <span>Prénom</span>
+            </label>
+        </div>
+
+        <label>
+            <input class="input" type="text" placeholder="" id="idNumber" required />
+            <span>CIN</span>
+        </label>
+        <label>
+            <input class="input" type="email" placeholder="" id="email" required />
+            <span>Adresse Email</span>
+        </label>
+        <label>
+            <input class="input" type="date" placeholder="" id="dateOfBirth" required />
+            <span>Date d'anniversaire</span>
+        </label>
+        <label>
+            <input class="input" type="text" placeholder="" id="phone" required />
+            <span>N° GSM</span>
+        </label>
+        <label>
+            <input class="input" type="text" placeholder="" id="address" required />
+            <span>Adresse de résidence</span>
+        </label>
+        <label>
+            <input class="input" type="text" placeholder="" id="region" required />
+            <span>Region</span>
+        </label>
+        <label>
+            <input class="input" type="text" placeholder="" id="destination" required />
+            <span>Destination</span>
+        </label>
+        <label>
+            <input class="input" type="date" placeholder="" id="startDate" required />
+            <span>Date Début</span>
+        </label>
+        <label>
+            <input class="input" type="date" placeholder="" id="endDate" required />
+            <span>Date Fin</span>
+        </label>
+        <label>
+            <input
+                class="input"
+                type="number"
+                placeholder=""
+                id="numberOfTravelers"
+                required
+                min="1"
+                max="13"
+                oninput="show(this.value)"
+            />
+            <span>Nombre de Voyageurs</span>
+        </label>
+
+        <div id="travelerContainer"></div>
+
+        <button id="" type="submit">
+            <span class="span-mother">
+                <span>S</span>
+                <span>o</span>
+                <span>u</span>
+                <span>m</span>
+                <span>e</span>
+                <span>t</span>
+                <span>t</span>
+                <span>r</span>
+                <span>e</span>
+            </span>
+            <span class="span-mother2">
+                <span>S</span>
+                <span>o</span>
+                <span>u</span>
+                <span>m</span>
+                <span>e</span>
+                <span>t</span>
+                <span>t</span>
+                <span>r</span>
+                <span>e</span>
+            </span>
+        </button>
+        <!-- <button id="exportExcel" type="button">export</button> -->
+    </form>
+
+    <script>
+        function show(nb) {
+            let container = document.getElementById("travelerContainer");
+            container.innerHTML = ""; 
+
+            nb = parseInt(nb);
+            if (isNaN(nb) || nb < 2) return; 
+
+            for (let i = 1; i < nb; i++) {
+                let travelerDiv = document.createElement("div");
+                travelerDiv.classList.add("flex");
+
+                travelerDiv.innerHTML = `
+                    <label>
+                        <input class="input" type="text" placeholder="" required>
+                        <span>Firstname</span>
+                    </label>
+                    <label>
+                        <input class="input" type="text" placeholder="" required>
+                        <span>Lastname</span>
+                    </label>
+                    <label>
+                        <input class="input" type="date" placeholder="" required>
+                        <span>Date d'anniversaire</span>
+                    </label>
+                `;
+
+                container.appendChild(travelerDiv);
+            }
+        }
+
+        document.getElementById('personalDataForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = {
+                lastName: document.getElementById('lastName').value,
+                firstName: document.getElementById('firstName').value,
+                idNumber: document.getElementById('idNumber').value,
+                email: document.getElementById('email').value,
+                dateOfBirth: document.getElementById('dateOfBirth').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                region: document.getElementById('region').value,
+                destination: document.getElementById('destination').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                numberOfTravelers: document.getElementById('numberOfTravelers').value
+            };
+
+            fetch('/api/submit', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.headers.get('content-type').includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error('Server response was not JSON');
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Data submitted successfully!');
+                document.getElementById('personalDataForm').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        // document.getElementById('exportExcel').addEventListener('click', function() {
+        //     window.location.href = '/api/export';
+        // });
+    </script>
+</body>
+</html>
